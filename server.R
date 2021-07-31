@@ -14,38 +14,9 @@ library(forcats)
 
 server = function(input, output) {
   
-  cpf <- read.csv("cpf.csv")
-  crime_sep <- read.csv("crime_sep.csv")
-  
-  
-  clean_questions <-  c("Victim of crime" = "victim",
-                        "Opened a case" = "open_case",
-                        "Satisfaction with SAPS response" = "satisfaction_response",
-                        "Experience with SAPS response" = "experience_response",
-                        "Reasons for not opening a case" = "reasons_nocase",
-                        "Victim support" = "victim_support",
-                        "Source of victim support" = "support_source",
-                        "Feel safe when it is dark" = "safe_dark",
-                        "Feel safe during the day" = "safe_day",
-                        "Protection" = "protection",
-                        "Actions to protect" = "protection_action",
-                        "No action to protect" = "protection_noaction",
-                        "Protection advice" = "protection_advice",
-                        "Action if see crime" = "see_crime",
-                        "Frequency of gender crime" = "gender_crime",
-                        "Shelter knowledge" = "shelter",
-                        "SAPS visibility" = "visible",
-                        "SAPS operations" = "police_operation",
-                        "Trust in SAPS" = "trust",
-                        "Priority crimes" = "priority_crimes",
-                        "Priority activities" = "priority_activities",
-                        "Satisfaction with SAPS" = "satisfaction",
-                        "SAPS doing well" = "doing_well",
-                        "SAPS problems" = "problems",
-                        "CPF activities" = "cpf_activities",
-                        "Actions to help" = "actions")
-  
-  crime_suburb <- reactive({
+ghs_income <- readRDS("ghs_income")
+
+crime_suburb <- reactive({
     
     crime_sep %>%
       filter(suburb %in% input$suburb,
