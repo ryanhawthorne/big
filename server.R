@@ -1,32 +1,22 @@
 # server
 # every time someone runs a render function, it runs, so minimum code
 
-library(janitor)
 library(dplyr)
 library(shiny)
 library(kableExtra)
 library(tidyr)
-library(stringr)
-library(naniar)
 library(ggplot2)
-library(rlang)
-library(forcats)
 
 server = function(input, output) {
   
-ghs_income <- readRDS("ghs_income")
+ghs <- readRDS("ghs")
 
-crime_suburb <- reactive({
+ghs_income <- reactive({
     
-    crime_sep %>%
-      filter(suburb %in% input$suburb,
-             gender %in% input$gender,
-             age %in% (input$range[1]:input$range[2]),
-             crime != "") %>%
-      group_by(crime) %>%
+    ghs %>%
+      select(totmhinc) %>%
+      group_by(bin) %>%
       tally() %>%
-      arrange(-n) %>%
-      mutate(crime = fct_reorder(crime, -n)) %>%
       ungroup()
   })
 
