@@ -18,7 +18,9 @@ ui <- fluidPage(
                 big_options,
                 selected = 0),
     textOutput("text_inequality"),
-    textOutput("inequality_result")
+    textOutput("inequality_result"),
+#    textOutput("text_cost"),
+#    textOutput("cost")
     ),
   
   mainPanel(

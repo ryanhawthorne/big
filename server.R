@@ -3,11 +3,12 @@
 
 library(dplyr)
 library(shiny)
-library(kableExtra)
 library(tidyr)
 library(ggplot2)
 require(scales)
-library(ineq)
+library(reldist)
+library(srvyr)
+
 
 
 lines <- c("poverty350", "poverty585", "poverty840", "poverty1268") # for ordering in ggplot graph
@@ -15,6 +16,12 @@ lines <- c("poverty350", "poverty585", "poverty840", "poverty1268") # for orderi
 ghs <- readRDS("ghs")
 weights <- ghs %>%
   pull(house_wgt)
+ghs_svy <- ghs %>%
+  select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh,ad18to60yr) %>%
+  as_survey_design(weights = house_wgt)
+adults <- ghs_svy %>%
+  survey_tally(ad18to60yr)
+
 
 server = function(input, output) {
   
@@ -43,6 +50,12 @@ inequality <- reactive({
 
   })
 
+#cost <- reactive({ 
+  
+#  cost <- as.numeric(input$big) * adults * 12
+
+#  })
+
 output$text_poverty <- renderText("Households below the poverty line") 
 output$bar_poverty <- renderPlot({
 
@@ -58,7 +71,7 @@ output$bar_poverty <- renderPlot({
           axis.title.y = element_text(size = 10,
                                       colour = "Black")) +
     labs(y = "Number of households below the poverty line",
-         x = "Poverty line (Rands per person per month)") +
+         x = "Poverty line (Rands per person per month in household)") +
     scale_x_discrete(limits = lines,
                      labels = c("poverty350" = "R350", "poverty585" = "R585", "poverty840" = "R840", "poverty1268" = "R1268")) +
     theme(axis.text.x = element_text(angle = 90,
@@ -74,5 +87,7 @@ output$bar_poverty <- renderPlot({
 
 output$text_inequality <- renderText("Gini co-efficient")
 output$inequality_result <- renderText(inequality())
- 
+
+#output$text_cost <- renderText("Cost (Rands)")
+# output$cost <- renderText(cost()) 
 }

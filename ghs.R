@@ -133,15 +133,13 @@ poverty365_bar
 
 adults <- ghs_svy %>%
   survey_tally(ad18to60yr)
-cost= big*adults*12
+cost <- big*adults*12
 cost
 
 ### hunger graph - for server
 
 
 
-data(AirPassengers)
-ineq(AirPassengers, type = "Gini")
 
 
 ### gini computation
