@@ -7,17 +7,20 @@ library(kableExtra)
 library(tidyr)
 library(ggplot2)
 require(scales)
+library(ineq)
+
 
 lines <- c("poverty350", "poverty585", "poverty840", "poverty1268") # for ordering in ggplot graph
 
+ghs <- readRDS("ghs")
+weights <- ghs %>%
+  pull(house_wgt)
+
 server = function(input, output) {
   
-ghs <- readRDS("ghs")
-
 poverty <- reactive({
     
   poverty <-  ghs %>%
-    mutate(ad18to60yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
     mutate(income_big = totmhinc + as.numeric(input$big) * ad18to60yr) %>%
     mutate(poverty350 = income_big < hholdsz * 350,
            poverty585 = income_big < hholdsz * 585,
@@ -30,6 +33,15 @@ poverty <- reactive({
     filter(poor == TRUE)
   })
 
+
+inequality <- reactive({ 
+  
+  income_big <- ghs %>%
+    mutate(income_big = totmhinc + as.numeric(input$big) * ad18to60yr) %>%
+    pull(income_big)
+  inequality <- round(gini(income_big, weights), 2)  
+
+  })
 
 output$text_poverty <- renderText("Households below the poverty line") 
 output$bar_poverty <- renderPlot({
@@ -59,5 +71,8 @@ output$bar_poverty <- renderPlot({
               size = 3.5) 
         
   })
+
+output$text_inequality <- renderText("Gini co-efficient")
+output$inequality_result <- renderText(inequality())
  
 }

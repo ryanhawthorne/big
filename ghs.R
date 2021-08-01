@@ -4,20 +4,20 @@ library(ggplot2)
 library(survey)
 library(srvyr)
 library(forcats)
+library(reldist)
 
 ghs_raw <- read.csv("zaf-statssa-ghs-2019-household-v1.csv")
 
 ghs <- ghs_raw %>%
-  select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh)
+  select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh) %>%
+  mutate(ad18to60yr = hholdsz - ad60plusyr_hh - chld17yr_hh)
   
 saveRDS(ghs, file = "ghs")
 
-
-ghs_svy <- ghs_raw %>%
-  select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh) %>%
+ghs_svy <- ghs %>%
+  select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh,ad18to60yr) %>%
   as_survey_design(weights = house_wgt) %>%
   mutate(bin10 = cut_number(totmhinc, 10, dig.lab = 5),
-         ad18to60yr = hholdsz - ad60plusyr_hh - chld17yr_hh,
          poverty350 = totmhinc < hholdsz * 350,
          poverty585 = totmhinc < hholdsz * 585,
          poverty840 = totmhinc < hholdsz * 840,
@@ -84,14 +84,13 @@ income_bar <- ghs_raw %>%
   theme(axis.text.x = element_text(angle = 90))
 income_bar
   
-# poverty graphs - for server
+### poverty graph - for server
 
 require(scales)
 library(tidyr)
 
-big <- 350
+big <- 0
 poverty <-  ghs %>%
-  mutate(ad18to60yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
   mutate(income_big = totmhinc + big * ad18to60yr) %>%
   mutate(poverty350 = income_big < hholdsz * 350,
          poverty585 = income_big < hholdsz * 585,
@@ -129,4 +128,30 @@ poverty365_bar <- ggplot(poverty,
             vjust = -1,
             size = 3.5) 
 poverty365_bar
-  
+
+### cost computation
+
+adults <- ghs_svy %>%
+  survey_tally(ad18to60yr)
+cost= big*adults*12
+cost
+
+### hunger graph - for server
+
+
+
+data(AirPassengers)
+ineq(AirPassengers, type = "Gini")
+
+
+### gini computation
+
+weights <- ghs %>%
+  pull(house_wgt)
+income_big <- ghs %>%
+  mutate(income_big = totmhinc + big * ad18to60yr) %>%
+  pull(income_big)
+
+inequality <- round(gini(income_big, weights), 2)  
+inequality
+
