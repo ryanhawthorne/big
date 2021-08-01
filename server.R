@@ -9,15 +9,14 @@ library(ggplot2)
 
 server = function(input, output) {
   
-ghs <- readRDS("ghs")
+ghs <- readRDS("ghs_raw")
 
 ghs_income <- reactive({
     
-    ghs %>%
-      select(totmhinc) %>%
-      group_by(bin) %>%
-      tally() %>%
-      ungroup()
+  ghs %>%
+    as_survey(weights = c(house_wgt)) %>%
+    group_by(bin) %>%
+    summarize(n = survey_total())
   })
 
   survey_variable <- reactive({
@@ -35,7 +34,7 @@ ghs_income <- reactive({
        ungroup()
    })
   
-  output$text_crime <- renderText("Crimes experienced by victims") 
+  output$text_crime <- renderText("BIG as percentage of income") 
   output$bar_crime <- renderPlot({
 
     ggplot(crime_suburb(), aes(x = crime, y = n)) +
