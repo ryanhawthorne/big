@@ -14,13 +14,14 @@ ui <- fluidPage(
   headerPanel('Households below the poverty line in South Africa for different basic income grants'),
   sidebarPanel(
     selectInput("big",
-                "Choose basic income grant option:",
+                "Choose basic income grant (Rands per month per person aged 18-60):",
                 big_options,
                 selected = 0),
     textOutput("text_inequality"),
     textOutput("inequality_result"),
-#    textOutput("text_cost"),
-#    textOutput("cost")
+    div("A reasonable Gini co-efficient is around 0.35, similar to South Korea or the United Kingdom."),
+    textOutput("text_cost"),
+    textOutput("cost")
     ),
   
   mainPanel(

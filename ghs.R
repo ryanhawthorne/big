@@ -89,7 +89,7 @@ income_bar
 require(scales)
 library(tidyr)
 
-big <- 0
+big <- 350
 poverty <-  ghs %>%
   mutate(income_big = totmhinc + big * ad18to60yr) %>%
   mutate(poverty350 = income_big < hholdsz * 350,
@@ -132,8 +132,9 @@ poverty365_bar
 ### cost computation
 
 adults <- ghs_svy %>%
-  survey_tally(ad18to60yr)
-cost <- big*adults*12
+  survey_tally(ad18to60yr) %>%
+  pull(n)
+cost<- as.numeric(big) * adults * 12 
 cost
 
 ### hunger graph - for server

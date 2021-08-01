@@ -20,7 +20,8 @@ ghs_svy <- ghs %>%
   select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh,ad18to60yr) %>%
   as_survey_design(weights = house_wgt)
 adults <- ghs_svy %>%
-  survey_tally(ad18to60yr)
+  survey_tally(ad18to60yr) %>%
+  pull(n)
 
 
 server = function(input, output) {
@@ -50,11 +51,11 @@ inequality <- reactive({
 
   })
 
-#cost <- reactive({ 
-  
-#  cost <- as.numeric(input$big) * adults * 12
+cost <- reactive({ 
 
-#  })
+    cost = as.numeric(input$big) * adults * 12 
+
+    })
 
 output$text_poverty <- renderText("Households below the poverty line") 
 output$bar_poverty <- renderPlot({
@@ -85,9 +86,9 @@ output$bar_poverty <- renderPlot({
         
   })
 
-output$text_inequality <- renderText("Gini co-efficient")
+output$text_inequality <- renderText("The resulting Gini co-efficient in South Africa is:")
 output$inequality_result <- renderText(inequality())
 
-#output$text_cost <- renderText("Cost (Rands)")
-# output$cost <- renderText(cost()) 
+output$text_cost <- renderText("The cost of the selected BIG (in Rands per year) is:")
+output$cost <- renderUI(cost()) 
 }
