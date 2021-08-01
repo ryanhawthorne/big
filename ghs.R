@@ -1,14 +1,14 @@
 library(foreign)
 library(dplyr)
 library(ggplot2)
-library(ggsurvey)
 library(survey)
 library(srvyr)
 library(forcats)
 
 ghs_raw <- read.csv("zaf-statssa-ghs-2019-household-v1.csv")
 
-ghs <- 
+ghs <- ghs_raw %>%
+  select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh)
   
 saveRDS(ghs, file = "ghs")
 
@@ -86,13 +86,13 @@ income_bar <- ghs_raw %>%
   theme(axis.text.x = element_text(angle = 90))
 income_bar
   
-# poverty graphs
+# poverty graphs - for server
 
 require(scales)
 library(tidyr)
 
 big <- 350
-poverty <-  ghs_raw %>%
+poverty <-  ghs %>%
   mutate(ad18to60yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
   mutate(income_big = totmhinc + big * ad18to60yr) %>%
   mutate(poverty350 = income_big < hholdsz * 350,

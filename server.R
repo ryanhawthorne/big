@@ -6,54 +6,49 @@ library(shiny)
 library(kableExtra)
 library(tidyr)
 library(ggplot2)
+require(scales)
+
+lines <- c("poverty350", "poverty585", "poverty840", "poverty1268") # for ordering in ggplot graph
 
 server = function(input, output) {
   
-ghs <- readRDS("ghs_raw")
+ghs <- readRDS("ghs")
 
-ghs_income <- reactive({
+poverty <- reactive({
     
-  ghs %>%
-    as_survey(weights = c(house_wgt)) %>%
-    group_by(bin) %>%
-    summarize(n = survey_total())
+  poverty <-  ghs %>%
+    mutate(ad18to60yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
+    mutate(income_big = totmhinc + as.numeric(input$big) * ad18to60yr) %>%
+    mutate(poverty350 = income_big < hholdsz * 350,
+           poverty585 = income_big < hholdsz * 585,
+           poverty840 = income_big < hholdsz * 840,
+           poverty1268 = income_big < hholdsz * 1268) %>%
+    select(poverty350, poverty585, poverty840, poverty1268, uqnr, house_wgt) %>%
+    pivot_longer(cols = starts_with("poverty"), 
+                 names_to = "poverty_line",
+                 values_to = "poor") %>%
+    filter(poor == TRUE)
   })
 
-  survey_variable <- reactive({
-    
-     varname <- input$var
-     cpf %>%
-       filter(suburb %in% input$suburb,
-              gender %in% input$gender,
-              age %in% (input$range[1]:input$range[2]),
-              input$var != "") %>%
-       group_by_at(input$var) %>%
-       tally() %>%
-       arrange(-n) %>%
-       # mutate(input$var = fct_reorder(.[[input$var]], -n)) %>%
-       ungroup()
-   })
-  
-  output$text_crime <- renderText("BIG as percentage of income") 
-  output$bar_crime <- renderPlot({
 
-    ggplot(crime_suburb(), aes(x = crime, y = n)) +
-      geom_bar(stat="identity") +
-      coord_flip() +
-      ylab("Number of incidents") + 
-      xlab("")
+output$text_poverty <- renderText("Households below the poverty line") 
+output$bar_poverty <- renderPlot({
+
+    ggplot(poverty(),
+           aes(x = poverty_line,
+                 weight = house_wgt)) +
+      geom_bar(fill = "#FF6666") +
+      labs(y = "",
+           x = "Poverty line (Rands per person per month)") +
+      scale_x_discrete(limits = lines,
+                       labels = c("poverty350" = "R350", "poverty585" = "R585", "poverty840" = "R840", "poverty1268" = "R1268")) +
+      theme(axis.text.x = element_text(angle = 90)) +
+      scale_y_continuous(labels = comma) +
+      geom_text(stat='count', 
+                aes(label=scales::comma(..count..)),
+                vjust = -1,
+                size = 3.5)
     
   })
  
-  output$text_var <- renderText(names(clean_questions)[clean_questions == input$var]) 
-  output$bar_variable <- renderPlot({
-
-    ggplot(survey_variable(), aes(x = get(input$var), y = n)) +
-      geom_bar(stat="identity") +
-      coord_flip() +
-      ylab("") +
-      xlab("")
-  })
-
-
 }
