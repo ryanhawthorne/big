@@ -21,7 +21,7 @@ ui <- fluidPage(
   mainPanel(
     textOutput("text_poverty"),
     plotOutput("bar_poverty"),
-    div("The Statistics South Africa General Household Survey 2019 (published in 2020) was used to compile this analysis.", style = "color:gray"),
+    div("The Statistics South Africa General Household Survey 2019 (published in 2020) was used to compile this analysis. The BIG is multiplied by the number of adults aged 18-60 and then is added to the monthly household income.", style = "color:gray"),
 
   )
 )
