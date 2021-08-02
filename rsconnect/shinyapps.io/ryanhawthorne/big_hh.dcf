@@ -5,8 +5,8 @@ account: ryanhawthorne
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4444694
-bundleId: 4877393
+bundleId: 4878621
 url: https://ryanhawthorne.shinyapps.io/big_hh/
-when: 1627835301.35884
+when: 1627880763.32249
 asMultiple: FALSE
 asStatic: FALSE

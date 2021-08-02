@@ -53,7 +53,7 @@ inequality <- reactive({
 
 cost <- reactive({ 
 
-    cost = as.numeric(input$big) * adults * 12 
+    cost = scales::comma(as.numeric(input$big) * adults * 12) 
 
     })
 
@@ -90,5 +90,5 @@ output$text_inequality <- renderText("The resulting Gini co-efficient in South A
 output$inequality_result <- renderText(inequality())
 
 output$text_cost <- renderText("The cost of the selected BIG (in Rands per year) is:")
-output$cost <- renderUI(cost()) 
+output$cost <- renderText(cost()) 
 }
