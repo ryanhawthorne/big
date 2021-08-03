@@ -32,7 +32,14 @@ ui <- fluidPage(
     
     h3(textOutput("cost")),
     
-    div("The cost is calculated by multiplying the number of adults aged 18-60 years old, approximately 32.2m people, by the BIG selected above and multiplying this by 12 to obtain an annual cost. Note that part of this amount is likely to return to the fiscus via VAT, company income tax, and payroll taxes.")
+    div("The cost is calculated by multiplying the number of adults aged 18-60 years old, approximately 32.2m people, by the BIG selected above 
+        and multiplying this by 12 to obtain an annual cost. Note that part of this amount is likely to return to the fiscus via VAT, company income tax, 
+        and payroll taxes. Government collects approximately 25% of output in taxes in South Africa, suggesting approximately 25% of the cost of the BIG 
+        will be recovered through taxes. In respect of affordability, it can be noted that the government spends approximately R100bn per year on 
+        corporate welfare: approximately R56bn is provided to state owned enterprises each year by the Department of Public Enterprises, a further R32bn
+        is offered by the Department of Trade, Industry and Competition each year in support of companies, and the Department of Small Business, 
+        Department of Communications and Digital Development, collect approximately R4bn per year. There are hundreds of loss-making electricity 
+        distributors in municipalities that easily absorb the remainder.")
     ),
   
   mainPanel(
