@@ -42,13 +42,15 @@ ui <- fluidPage(
     h3("Households below the Statistics South Africa poverty lines"),
     plotOutput("bar_poverty"),
     div("The Statistics South Africa General Household Survey 2019 (published in 2020) was used to compile this analysis. 
-        The BIG is multiplied by the number of adults aged 18-59 in each household, and then this is added to the monthly household income, and the number of households under each poverty line are counted.", style = "color:gray"),
+        The BIG is multiplied by the number of adults aged 18-59 in each household, and then this is added to the monthly household income, 
+        and the number of households under each Statistics South Africa poverty line are counted.", style = "color:gray"),
     h3("Number of households below the food poverty line (R585 per person) reporting hunger"),
     plotOutput("bar_hunger"),
     div("The Statistics South Africa General Household Survey 2019 (published in 2020) was used to compile this analysis. 
         The BIG is multiplied by the number of adults aged 18-59 in each household, and then this is added to the monthly household income. 
-        The number of households reporting hunger that are below the food poverty line are then counted. Note that the number of households reporting 
-        hunger is closer to 2.5m, as households up to approximately R12,000 per month in income still report some degree of hunger.", style = "color:gray"),
+        The number of households reporting hunger that are below the food poverty line (R585 per person per month, multiplied by the number of people 
+        in the household) are then counted. Note that the number of households reporting hunger is closer to 2.5m, 
+        as households up to approximately R12,000 per month in income still report some degree of hunger.", style = "color:gray"),
     
     
   )
