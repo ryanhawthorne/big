@@ -28,3 +28,5 @@ vignettes/*.pdf
 .Renviron
 cs-2016-household.dta
 zaf-statssa-ghs-2019-household-v1.csv
+notes.nb.html
+notes.Rmd

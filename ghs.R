@@ -11,8 +11,8 @@ library(tidyr)
 ghs_raw <- read.csv("zaf-statssa-ghs-2019-household-v1.csv")
 
 ghs <- ghs_raw %>%
-  select(uqnr, house_wgt,totmhinc, FIN_EXP,FSD_WORRIED,FSD_SKIPPED, FSD_HUNGRY, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh) %>%
-  mutate(ad18to60yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
+  select(uqnr, house_wgt,totmhinc, FIN_EXP,FSD_WORRIED,FSD_SKIPPED, FSD_HUNGRY,FSD_RANOUT, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh) %>%
+  mutate(ad18to59yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
   mutate(bin10 = cut_number(totmhinc, 10, dig.lab = 5),
          poverty350 = totmhinc < hholdsz * 350,
          poverty585 = totmhinc < hholdsz * 585,
@@ -54,7 +54,7 @@ ghs_svy %>%
 ghs_svy %>%
   group_by(bin10) %>%
   summarize(mean_size = survey_mean(hholdsz),
-            mean_ad18to60yr = survey_mean(ad18to60yr),
+            mean_ad18to59yr = survey_mean(ad18to59yr),
             mean_inc = survey_mean(totmhinc),
             mean_salary = survey_mean(LAB_SALARY_hh))
 
@@ -86,6 +86,11 @@ ghs_svy %>%
   group_by(FSD_SKIPPED) %>%
   survey_count()
 
+ghs_svy %>%
+  group_by(FSD_RANOUT) %>%
+  survey_count()
+
+
 # histogram
 income_hist <- ggplot(ghs_raw,
                       aes(x = totmhinc,
@@ -109,7 +114,7 @@ income_bar
 
 big <- 0
 poverty_inc <-  ghs %>%
-  mutate(income_big = totmhinc + big * ad18to60yr) %>%
+  mutate(income_big = totmhinc + big * ad18to59yr) %>%
   mutate(poverty350 = income_big < hholdsz * 350,
          poverty585 = income_big < hholdsz * 585,
          poverty840 = income_big < hholdsz * 840,
@@ -140,7 +145,8 @@ poverty_inc_bar <- ggplot(poverty_inc,
   theme(axis.text.x = element_text(angle = 90,
                                    size = 10,
                                    colour = "Black")) +
-  scale_y_continuous(labels = comma) +
+  scale_y_continuous(labels = comma,
+                     limits = c(0,9000000)) +
   geom_text(stat='count', 
             aes(label=scales::comma(..count..)),
             vjust = -1,
@@ -151,7 +157,7 @@ poverty_inc_bar
 ### poverty using expenditure
 
 poverty_exp <-  ghs %>%
-  mutate(exp_big = FIN_EXP + big * ad18to60yr) %>%
+  mutate(exp_big = FIN_EXP + big * ad18to59yr) %>%
   mutate(poverty350 = exp_big < hholdsz * 350,
          poverty585 = exp_big < hholdsz * 585,
          poverty840 = exp_big < hholdsz * 840,
@@ -164,41 +170,35 @@ poverty_exp <-  ghs %>%
 
 ### cost computation
 
-adults <- ghs_svy %>%
-  survey_tally(ad18to60yr) %>%
+adults_ghs <- ghs_svy %>%
+  survey_tally(ad18to59yr) %>%
   pull(n)
-cost<- as.numeric(big) * adults * 12 
+adults_iej <- 34100000
+cost<- as.numeric(big) * adults_iej * 12 
 cost
 
 ### hunger graph - for server
+big <- 350
+hungry <- ghs %>%
+  mutate(income_big = totmhinc + big * ad18to59yr) %>%
+  mutate(food_skipped = FSD_SKIPPED == "Yes",
+         food_ranout = FSD_RANOUT == "Yes",
+         food_adult = FSD_Hung_Adult == "Always" | FSD_Hung_Adult ==  "Often" | FSD_Hung_Adult == "Sometimes" | FSD_Hung_Adult =="Seldom", 
+         food_child = FSD_Hung_Child == "Always" | FSD_Hung_Child == "Often" | FSD_Hung_Child == "Sometimes" | FSD_Hung_Child == "Seldom") %>%
+  mutate(food_skipped = ifelse(income_big > hholdsz * 585  & food_skipped == TRUE, FALSE,food_skipped), # + 12000
+           food_ranout = ifelse(income_big > hholdsz * 585  & food_ranout == TRUE, FALSE,food_ranout),  # + 12000
+           food_adult = ifelse(income_big > hholdsz * 585  & food_adult == TRUE, FALSE, food_adult), # + 12000
+           food_child = ifelse(income_big > hholdsz * 585  & food_child == TRUE, FALSE,food_child)) %>% # + 12000
+  select(food_skipped, food_ranout, food_adult, food_child, uqnr, house_wgt) %>%
+  pivot_longer(cols = starts_with("food"), 
+               names_to = "food_indicator",
+               values_to = "hungry") %>%
+  filter(hungry == TRUE) 
 
-hungry <-  ghs %>%
-  mutate(income_big = totmhinc + big * ad18to60yr, 
-         hungry_child = as.factor(FSD_Hung_Child),
-         hungry_adult = as.factor(FSD_Hung_Adult)) %>%
-  { ifelse(income_big > poverty585 & hungry_child !=2, 
-           mutate(hungry_child = 2), . ) } %>%
-  { ifelse(income_big > poverty585 & hungry_adult !=2, 
-           mutate(hungry_adult = 2), . ) }
-  
-  
-  
+hungry_list <- c("food_ranout","food_skipped", "food_adult","food_child")
 
-levels(hungry$hungry_adult) # check levels
-           
-  == c("Always","Often", "Seldom", "Sometimes", "Never")) 
-         
- 
-  select(poverty350, poverty585, poverty840, poverty1268, uqnr, house_wgt) %>%
-  pivot_longer(cols = starts_with("poverty"), 
-               names_to = "poverty_line",
-               values_to = "poor")  %>%
-  filter(poor == TRUE) 
-
-lines <- c("poverty350", "poverty585", "poverty840", "poverty1268") # for ordering in ggplot graph
-
-hungry <- ggplot(poverty_inc,
-                          aes(x = poverty_line,
+hungry_bar <- ggplot(hungry,
+                          aes(x = food_indicator,
                               weight = house_wgt)) +
   geom_bar(fill = "#FF6666") +
   theme(text = element_text(size = 10),
@@ -208,20 +208,20 @@ hungry <- ggplot(poverty_inc,
                                     colour = "Black"),
         axis.title.y = element_text(size = 10,
                                     colour = "Black")) +
-  labs(y = "Number of households below the poverty line",
-       x = "Poverty line (Rands per person per month)") +
-  scale_x_discrete(limits = lines,
-                   labels = c("poverty350" = "R350", "poverty585" = "R585", "poverty840" = "R840", "poverty1268" = "R1268")) +
+  labs(y = "Number of households",
+       x = "") +
+  scale_x_discrete(limits = hungry_list,
+                   labels = c("food_ranout" = "Food ran out", "food_skipped" = "Skipped a meal", "food_adult" = "Hungry adult", "food_child" = "Hungry child")) +
   theme(axis.text.x = element_text(angle = 90,
                                    size = 10,
                                    colour = "Black")) +
-  scale_y_continuous(labels = comma) +
+  scale_y_continuous(labels = comma,
+                     limits = c(0,1300000)) +
   geom_text(stat='count', 
             aes(label=scales::comma(..count..)),
             vjust = -1,
             size = 3.5) 
-poverty_inc_bar
-
+hungry_bar
 
 
 ### gini computation
@@ -229,7 +229,7 @@ poverty_inc_bar
 weights <- ghs %>%
   pull(house_wgt)
 income_big <- ghs %>%
-  mutate(income_big = totmhinc + big * ad18to60yr) %>%
+  mutate(income_big = totmhinc + big * ad18to59yr) %>%
   pull(income_big)
 
 inequality <- round(gini(income_big, weights), 2)  
