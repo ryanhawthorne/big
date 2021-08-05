@@ -71,7 +71,7 @@ inequality <- reactive({
 
 cost <- reactive({ 
     
-    cost = scales::comma(as.numeric(input$big) * adults * 12) 
+    cost = scales::comma(as.numeric(input$big) * adults * 12 / 1000000000) 
 
     })
 
