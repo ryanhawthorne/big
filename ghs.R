@@ -112,7 +112,7 @@ income_bar
   
 ### poverty graph using income - for server
 
-big <- 0
+big <- 350
 poverty_inc <-  ghs %>%
   mutate(income_big = totmhinc + big * ad18to59yr) %>%
   mutate(poverty350 = income_big < hholdsz * 350,
@@ -176,6 +176,11 @@ adults_ghs <- ghs_svy %>%
 adults_iej <- 34100000
 cost<- as.numeric(big) * adults_iej * 12 
 cost
+
+
+expenditure_total <- 2020400000000
+expenditure = scales::percent(as.numeric(cost) / as.numeric(expenditure_total)) 
+expenditure
 
 ### hunger graph - for server
 big <- 350

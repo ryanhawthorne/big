@@ -22,7 +22,7 @@ ghs_svy <- ghs %>%
   select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh,ad18to59yr) %>%
   as_survey_design(weights = house_wgt)
 adults <- 34100000 # iej source
-
+expenditure_total <- 2020400000000
 
 server = function(input, output) {
   
@@ -70,12 +70,17 @@ inequality <- reactive({
   })
 
 cost <- reactive({ 
-
+    
     cost = scales::comma(as.numeric(input$big) * adults * 12) 
 
     })
 
-output$text_poverty <- renderText("Households below the poverty line")
+expenditure <- reactive({ 
+  
+  expenditure = scales::percent((as.numeric(input$big) * adults * 12) / as.numeric(expenditure_total)) 
+  
+})
+
 output$bar_poverty <- renderPlot({
 
   ggplot(poverty(),
@@ -90,7 +95,7 @@ output$bar_poverty <- renderPlot({
           axis.title.y = element_text(size = 10,
                                       colour = "Black")) +
     labs(y = "Number of households below the poverty line",
-         x = "Poverty line (Rands per person per month in household)") +
+         x = "Poverty line (Rands per person per month in each household)") +
     scale_x_discrete(limits = lines,
                      labels = c("poverty350" = "R350", "poverty585" = "R585", "poverty840" = "R840", "poverty1268" = "R1268")) +
     theme(axis.text.x = element_text(angle = 90,
@@ -117,7 +122,7 @@ output$bar_hunger <- renderPlot({
                                       colour = "Black"),
           axis.title.y = element_text(size = 10,
                                       colour = "Black")) +
-    labs(y = "Number of households",
+    labs(y = "Number of households below the food poverty line (R585/person/month)",
          x = "") +
     scale_x_discrete(limits = hungry_list,
                      labels = c("food_ranout" = "Food ran out", "food_skipped" = "Skipped a meal", "food_adult" = "Hungry adult", "food_child" = "Hungry child")) +
@@ -133,9 +138,9 @@ output$bar_hunger <- renderPlot({
   
   })
 
-output$text_inequality <- renderText("The resulting Gini co-efficient in South Africa is:")
 output$inequality_result <- renderText(inequality())
 
-output$text_cost <- renderText("The cost of the selected BIG (in Rands per year) is:")
 output$cost <- renderText(cost()) 
+
+output$expenditure <- renderText(expenditure())
 }
