@@ -11,7 +11,8 @@ library(tidyr)
 ghs_raw <- read.csv("zaf-statssa-ghs-2019-household-v1.csv")
 
 ghs <- ghs_raw %>%
-  select(uqnr, house_wgt,totmhinc, FIN_EXP,FSD_WORRIED,FSD_SKIPPED, FSD_HUNGRY,FSD_RANOUT, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh) %>%
+  select(uqnr, house_wgt,totmhinc, FIN_EXP,FSD_WORRIED,FSD_SKIPPED, FSD_HUNGRY,FSD_RANOUT,FIN_INC_pen,FIN_PEN, FIN_INC_buss,FIN_INC_agric,FIN_INC_oth,FIN_INC_MAIN,FIN_EXP,
+         FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh) %>%
   mutate(ad18to59yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
   mutate(bin10 = cut_number(totmhinc, 10, dig.lab = 5),
          poverty350 = totmhinc < hholdsz * 350,
@@ -30,6 +31,34 @@ ghs_svy <- ghs %>%
 
 ghs_raw %>%
   summarise(mean = mean(hholdsz))
+
+ghs_svy %>%
+  group_by(FIN_INC_pen) %>%
+  summarize(n = survey_total()) %>%
+  ungroup
+
+str(ghs_svy$variables)
+
+ghs_svy %>%
+  filter(FIN_PEN != "Not applicable") %>%
+  group_by(FIN_PEN) %>%
+  summarize(n = survey_total())
+
+ghs_svy %>%
+  group_by(FIN_INC_buss) %>%
+  summarize(n = survey_total())
+
+ghs_svy %>%
+  group_by(FIN_INC_agric) %>%
+  summarize(n = survey_total())
+
+ghs_svy %>%
+  group_by(FIN_INC_oth) %>%
+  summarize(n = survey_total())
+
+ghs_svy %>%
+  group_by(FIN_INC_MAIN) %>%
+  summarize(n = survey_total())
 
 ghs_svy %>%
   group_by(poverty350) %>%
