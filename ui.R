@@ -21,11 +21,14 @@ ui <- fluidPage(
     
     h3("Impact on inequality"),
     
-    div("The resulting Gini coefficient (measure of inequality) is:"),
+    div("The resulting Gini coefficient (a measure of inequality, where 0 is highly equal and 1 is highly unequal) is:"),
 
     h3(textOutput("inequality_result"), style = "color:#FF6666"),
     
-    div("A reasonable Gini co-efficient is between 0.25 (such as in Sweden, Norway and Finland) and 0.35 (as in Mauritius, South Korea, United Kingdom.)"),
+    div("A reasonable Gini co-efficient is between 0.25 (such as in Sweden, Norway and Finland) and 0.35 (as in Mauritius, South Korea, and the United Kingdom). The Gini is calculated using
+        monthly household income from the Statistics South Africa General Household Survey (GHS), adding the BIG multiplied by the number of household members aged 18-59. Note that the monthly 
+        household income variable in the GHS is aimed at capturing information on incomes less than R20,000 and so does not capture income sources such as interest and rental income. 
+        The Gini coefficient presented here is therefore underestimated."),
     
     h3("Cost"),
     

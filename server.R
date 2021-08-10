@@ -98,8 +98,7 @@ output$bar_poverty <- renderPlot({
          x = "Poverty line (Rands per person per month in each household)") +
     scale_x_discrete(limits = lines,
                      labels = c("poverty350" = "R350", "poverty585" = "R585", "poverty840" = "R840", "poverty1268" = "R1268")) +
-    theme(axis.text.x = element_text(angle = 90,
-                                     size = 10,
+    theme(axis.text.x = element_text(size = 10,
                                      colour = "Black")) +
     scale_y_continuous(labels = comma,
                        limits = c(0,9000000)) +
@@ -122,11 +121,11 @@ output$bar_hunger <- renderPlot({
                                       colour = "Black"),
           axis.title.y = element_text(size = 10,
                                       colour = "Black")) +
-    labs(y = "Number of households below the food poverty line (R585/person/month)",
-         x = "") +
+    labs(y = "Number of households below the food poverty line (R585/person/mon)",
+         x = "Indicator of hunger reported for household") +
     scale_x_discrete(limits = hungry_list,
                      labels = c("food_ranout" = "Food ran out", "food_skipped" = "Skipped a meal", "food_adult" = "Hungry adult", "food_child" = "Hungry child")) +
-    theme(axis.text.x = element_text(angle = 90,
+    theme(axis.text.x = element_text(angle = 45,
                                      size = 10,
                                      colour = "Black")) +
     scale_y_continuous(labels = comma,
