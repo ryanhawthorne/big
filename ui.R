@@ -27,7 +27,7 @@ ui <- fluidPage(
     
     div("A reasonable Gini co-efficient is between 0.25 (such as in Sweden, Norway and Finland) and 0.35 (as in Mauritius, South Korea, and the United Kingdom). The Gini is calculated using
         monthly household income from the Statistics South Africa General Household Survey (GHS), adding the BIG multiplied by the number of household members aged 18-59. Note that the monthly 
-        household income variable in the GHS is aimed at capturing information on incomes less than R20,000 and so does not capture income sources such as interest and rental income. 
+        household income variable in the GHS is aimed at capturing information on incomes less than R20,000 and does not capture income sources such as interest and rental income. 
         The Gini coefficient presented here is therefore underestimated."),
     
     h3("Cost"),
@@ -52,8 +52,11 @@ ui <- fluidPage(
     plotOutput("bar_poverty"),
     div("Notes: The Statistics South Africa General Household Survey 2019 (published in 2020) was used to compile this analysis. 
         The BIG is multiplied by the number of adults aged 18-59 in each household, and then this is added to the household's reported monthly household income.
-        The number of households under each Statistics South Africa poverty line and an additional R350 per person per month 
-        (the Covid-19 social relief of distress grant) poverty line are counted.", style = "color:gray"),
+        The number of households under each Statistics South Africa poverty line and an additional R350 per person per month (the Covid-19 social relief of distress grant) 
+        poverty line are counted. Note that the monthly household income variable in the GHS ('totmhinc') is aimed at capturing information on incomes less than R20,000 
+        and does not capture income sources such as interest and rental income (around 287,812 households report this as their main source of income) nor pensions (other than 
+        state old age grants; 510,712 households report pensions as their main source of income). There may therefore be some households reported here as below the poverty line 
+        that are not in fact so.", style = "color:gray"),
     h3("Households below the food poverty line reporting hunger"),
     plotOutput("bar_hunger"),
     div("Notes: The Statistics South Africa General Household Survey 2019 (published in 2020) was used to compile this analysis. 
@@ -62,7 +65,7 @@ ui <- fluidPage(
         in the household) are then counted. A household that has an income, after adding the BIG, that is higher than R585 multiplied by the number of 
         household members, we assume to no longer be hungry. Note that the number of households reporting hunger is closer to 2.5m, 
         as households up to approximately R12,000 per month in income still report some degree of hunger, and so the number of hungry households, even after
-        the BIG, is likely significantly under-estimated.", style = "color:gray"),
+        the BIG, is likely significantly under-estimated. See also the note on the 'totmhinc' variable used for income in the note above.", style = "color:gray"),
     
     
   )
