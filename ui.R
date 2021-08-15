@@ -46,20 +46,7 @@ ui <- fluidPage(
       likely to return to the fiscus via VAT, company income tax, and payroll taxes. Government collects approximately 
       26% of GDP in taxes in South Africa, suggesting a significant proportion of the cost of the BIG 
         will be recovered through taxes, since the BIG income would likely be spent on goods and services that attract VAT 
-        and are supplied by companies paying income taxes and employing individuals paying income taxes."),
-    
-    h3("Author and acknowledgements"),
-    
-    div("This Shiny app was built by:",
-        a(href = "https://acaciaeconomics.com/people/ryanhawthorne",
-          "Dr Ryan Hawthorne, economist at Acacia Economics."),
-        "The source code is ",
-        a(href = "https://github.com/ryanhawthorne/big",
-        "available on Github."),
-        "The app benefited greatly from comments by staff at the Institute for Economic Justice and at Acacia Economics, and drew from",
-        a(href = "https://www.datafirst.uct.ac.za/training/resources",
-        "the work of Dr Andrew Kerr (DataFirst, UCT) on household incomes in the Statssa GHS."), 
-        "Remaining errors are my own.")
+        and are supplied by companies paying income taxes and employing individuals paying income taxes.")
     ),
   
   mainPanel(
@@ -92,7 +79,20 @@ ui <- fluidPage(
         After these adjustments, there are still 207 201 househoulds reporting zero income, of which 64 846 report salaries/wages/commission as their main source of income,
         and 22 922 report other sources such as (rental income, interest) as their main source, and 30 845 report income from a business as the main source. The number of households
         under each poverty line is therefore overestimated to a small degree.", 
-        style = "color:gray"))
+        style = "color:gray"),
+    
+    h3("Author and acknowledgements"),
+    
+    div("This Shiny app was built by:",
+        a(href = "https://acaciaeconomics.com/people/ryanhawthorne",
+          "Dr Ryan Hawthorne, economist at Acacia Economics."),
+        "The source code is ",
+        a(href = "https://github.com/ryanhawthorne/big",
+          "available on Github."),
+        "The app benefited greatly from comments by staff at the Institute for Economic Justice and at Acacia Economics, and drew from",
+        a(href = "https://www.datafirst.uct.ac.za/training/resources",
+          "the work of Dr Andrew Kerr (DataFirst, UCT) on household incomes in the Statssa GHS."), 
+        "Remaining errors are my own."))
   
 )
 
