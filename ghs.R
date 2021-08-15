@@ -8,9 +8,10 @@ library(reldist)
 library(scales)
 library(tidyr)
 
-ghs_raw <- read.csv("zaf-statssa-ghs-2019-household-v1.csv")
+ghs_raw_hh <- read.csv("zaf-statssa-ghs-2019-household-v1.csv")
+ghs_raw_pers <- read.csv("zaf-statssa-ghs-2019-person-v1.csv")
 
-ghs <- ghs_raw %>%
+ghs_hh <- ghs_raw_hh %>%
   select(uqnr, house_wgt,totmhinc, FIN_EXP,FSD_WORRIED,FSD_SKIPPED, FSD_HUNGRY,FSD_RANOUT,FIN_INC_pen,FIN_PEN, FIN_INC_buss,FIN_INC_agric,FIN_INC_oth,FIN_INC_MAIN,FIN_EXP,
          FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh) %>%
   mutate(ad18to59yr = hholdsz - ad60plusyr_hh - chld17yr_hh) %>%
@@ -19,6 +20,9 @@ ghs <- ghs_raw %>%
          poverty585 = totmhinc < hholdsz * 585,
          poverty840 = totmhinc < hholdsz * 840,
          poverty1268 = totmhinc < hholdsz * 1268)
+
+ghs_pers <- ghs_raw_pers %>%
+  select(uqnr)
   
 saveRDS(ghs, file = "ghs")
 
