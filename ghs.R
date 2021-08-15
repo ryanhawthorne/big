@@ -14,12 +14,17 @@ ghs_raw_pers <- read.csv("zaf-statssa-ghs-2019-person-v1.csv")
 ghs_hh <- ghs_raw_hh %>%
   select(uqnr, house_wgt,totmhinc, FIN_EXP,FSD_WORRIED,FSD_SKIPPED, FSD_HUNGRY,FSD_RANOUT,FIN_INC_pen,FIN_PEN, FIN_INC_buss,
          FIN_INC_agric,FIN_INC_oth,FIN_INC_MAIN,FIN_EXP, FIN_REM, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,
-         ad60plusyr_hh,chld17yr_hh) %>%
+         ad60plusyr_hh,chld17yr_hh,FIN_REQINC,FIN_COMPINC) %>%
   mutate(ad18to59yr = hholdsz - ad60plusyr_hh - chld17yr_hh,
          remittances = replace_na(as.numeric(FIN_REM), 0), # takes remittances variable, replaces missing as 0
          remittances = ifelse(remittances >= 888888888, 0, remittances),  
          pension = replace_na(as.numeric(FIN_PEN), 0), # takes remittances variable, replaces missing as 0
-         pension = ifelse(pension >= 888888888, 0, pension),  
+         pension = ifelse(pension >= 888888888, 0, pension),
+         income_req = replace_na(as.numeric(FIN_REQINC), 0), # takes remittances variable, replaces missing as 0
+         income_req = ifelse(FIN_COMPINC == "Unspecified", 0,
+                             ifelse(FIN_COMPINC == "Lower", 0,
+                                    ifelse(FIN_COMPINC == "Much lower",
+                                           income_req))),
          hh_income = remittances + pension,
          hh_expenditure = ifelse(FIN_EXP == "R1-R199",100,
                                  ifelse(FIN_EXP == "R200-R399",300,
@@ -70,6 +75,7 @@ ghs_all <- personal_income_dat  %>%
 #         income = ifelse(rental_interest > income, rental_interest, income), 
 # can deal with the 287,812 households that mainly live off interest or rental income but doesn't make a big difference so dropped this
          income = ifelse(totmhinc > income, totmhinc, income), # replace income with statssa derived variable if income reported is lower
+         income = ifelse(income_req > income, income_req, income), # replace income with statssa derived variable if income reported is lower
          poverty350 = income < hholdsz * 350, # create poverty line dummies
          poverty585 = income < hholdsz * 585,
          poverty840 = income < hholdsz * 840,
