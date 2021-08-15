@@ -18,9 +18,7 @@ hungry_list <- c("food_ranout","food_skipped", "food_adult","food_child")
 ghs <- readRDS("ghs")
 weights <- ghs %>%
   pull(house_wgt)
-ghs_svy <- ghs %>%
-  select(uqnr, house_wgt,totmhinc, FSD_Hung_Adult,FSD_Hung_Child,hholdsz,LAB_SALARY_hh,ad60plusyr_hh,chld17yr_hh,ad18to59yr) %>%
-  as_survey_design(weights = house_wgt)
+
 adults <- 34100000 # iej source
 expenditure_total <- 2020400000000
 
@@ -29,7 +27,7 @@ server = function(input, output) {
 poverty <- reactive({
     
   poverty <-  ghs %>%
-    mutate(income_big = totmhinc + as.numeric(input$big) * ad18to59yr) %>%
+    mutate(income_big = income + as.numeric(input$big) * ad18to59yr) %>%
     mutate(poverty350 = income_big < hholdsz * 350,
            poverty585 = income_big < hholdsz * 585,
            poverty840 = income_big < hholdsz * 840,
@@ -43,7 +41,7 @@ poverty <- reactive({
 
 hungry <- reactive({
   hungry <- ghs %>%
-    mutate(income_big = totmhinc + as.numeric(input$big) * ad18to59yr) %>%
+    mutate(income_big = income + as.numeric(input$big) * ad18to59yr) %>%
     mutate(food_skipped = FSD_SKIPPED == "Yes",
            food_ranout = FSD_RANOUT == "Yes",
            food_adult = FSD_Hung_Adult == "Always" | FSD_Hung_Adult ==  "Often" | FSD_Hung_Adult == "Sometimes" | FSD_Hung_Adult =="Seldom", 
@@ -63,7 +61,7 @@ hungry <- reactive({
 inequality <- reactive({ 
   
   income_big <- ghs %>%
-    mutate(income_big = totmhinc + as.numeric(input$big) * ad18to59yr) %>%
+    mutate(income_big = income + as.numeric(input$big) * ad18to59yr) %>%
     pull(income_big)
   inequality <- round(gini(income_big, weights), 2)  
 
