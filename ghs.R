@@ -56,10 +56,13 @@ ghs_pers <- ghs_raw_pers %>%
          personal_income = grant_income + earnings_income # total personal income (grants + earnings)
          ) 
 
-ghs_all <- ghs_pers %>%
+# add up personal income by household
+personal_income_dat <- ghs_pers %>%
   group_by(uqnr) %>%
   summarise(personal_income_hh = sum(personal_income)) %>% # adds up personal income by household
-  ungroup() %>%
+  ungroup()
+
+ghs_all <- personal_income_dat  %>%
   inner_join(ghs_hh, # and join hh dataset
              by = "uqnr") %>%
   mutate(income = personal_income_hh + hh_income,
@@ -116,7 +119,7 @@ ghs_svy_hh %>%
   filter(income == 0) %>%
   summarize(n = survey_total())
 
-zero_income_hh <- ghs_all %>%
+zero_income_hh <- ghs_hh_pers %>%
   filter(income == 0)
 
 ghs_svy_hh %>%
