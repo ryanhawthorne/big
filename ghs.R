@@ -23,7 +23,7 @@ ghs_hh <- ghs_raw_hh %>%
          income_req = replace_na(as.numeric(FIN_REQINC), 0), # takes remittances variable, replaces missing as 0
          income_req = ifelse(FIN_COMPINC == "Unspecified", 0,
                              ifelse(FIN_COMPINC == "Lower", 0,
-                                    ifelse(FIN_COMPINC == "Much lower",
+                                    ifelse(FIN_COMPINC == "Much lower",0,
                                            income_req))),
          hh_income = remittances + pension,
          hh_expenditure = ifelse(FIN_EXP == "R1-R199",100,
@@ -103,7 +103,7 @@ ghs_svy_pers <- ghs_pers %>%
 ghs_svy_pers %>%
   summarise(mean = survey_mean(earnings_income),
             count = survey_total())
-summary(ghs_pers_all)
+summary(ghs_all)
 
 # household data
 

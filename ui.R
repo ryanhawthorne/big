@@ -27,12 +27,9 @@ ui <- fluidPage(
 
     h3(textOutput("inequality_result"), style = "color:#FF6666"),
     
-    div("A reasonable Gini co-efficient is between 0.25 (similar to that in Sweden, Norway and Finland) and 0.35 (close to the Gini in Mauritius, 
+    div("A reasonable Gini co-efficient is between 0.25 (similar to that in Finland, Norway and Sweden) and 0.35 (close to the Gini in Mauritius, 
         South Korea, and the United Kingdom). The Gini is calculated using monthly household income from the Statistics South Africa 
-        General Household Survey (GHS), adding the BIG multiplied by the number of household members aged 18-59. The approach to 
-        computing monthly household income from the GHS broadly follows the methodology developed", 
-        a(href = "https://www.datafirst.uct.ac.za/training/resources",
-          "Andrew Kerr (DataFirst, UCT).")),
+        General Household Survey (GHS, see note below), adding the BIG multiplied by the number of household members aged 18-59."),
     
     h3("Cost"),
     
@@ -70,11 +67,8 @@ ui <- fluidPage(
     plotOutput("bar_poverty"),
     div("Notes: The Statistics South Africa General Household Survey 2019 (published in 2020) was used to compile this analysis. 
         The BIG is multiplied by the number of adults aged 18-59 in each household, and then this is added to the household's reported 
-        monthly household income. The number of households under each Statistics South Africa poverty line and an additional 
-        R350 per person per month (the Covid-19 social relief of distress grant) poverty line are counted. The approach to 
-        computing monthly household income from the GHS broadly follows", 
-        a(href = "https://www.datafirst.uct.ac.za/training/resources",
-          "the methodology developed by Andrew Kerr (DataFirst, UCT)."), 
+        monthly household income (see note below). The number of households under each Statistics South Africa poverty line and an additional 
+        R350 per person per month (the Covid-19 social relief of distress grant) poverty line are counted.",
         style = "color:gray"),
     h3("Households below the food poverty line reporting hunger"),
     plotOutput("bar_hunger"),
@@ -85,9 +79,21 @@ ui <- fluidPage(
         the BIG, that is higher than R585 multiplied by the number of household members, we assume to no longer be hungry. Note that 
         the number of households reporting hunger is closer to 2.5m, as households up to approximately R12,000 per month in income 
         still report some degree of hunger, and so the number of hungry households, even after the BIG, is likely significantly 
-        under-estimated. See also the note on the variable used for income above.", 
+        under-estimated.",
         style = "color:gray"),
-  )
+    h3("Approach to calculating household income"),
+    div("The approach to computing monthly household income from the GHS used here is similar to", 
+        a(href = "https://www.datafirst.uct.ac.za/training/resources",
+          "the methodology developed by Dr Andrew Kerr (DataFirst, UCT)."),
+        "This approach starts by summing income from grants, salaries/wages, remittances, and pensions. If this sum is less than household expenditure,
+        the latter is used instead. In addition to Dr Kerr's approach, if this derived household income was still less than the 'totmhinc' variable derived by Statssa, the
+        latter replaced the former. Further, if the resulting household income variable was less than the reported minimum monthly income required for the household
+        to make ends meet, and the respondent reported that household income was more or less the same, higher or much higher than this requirement, the latter was used. 
+        After these adjustments, there are still 207 201 househoulds reporting zero income, of which 64 846 report salaries/wages/commission as their main source of income,
+        and 22 922 report other sources such as (rental income, interest) as their main source, and 30 845 report income from a business as the main source. The number of households
+        under each poverty line is therefore overestimated to a small degree.", 
+        style = "color:gray"))
+  
 )
 
 
