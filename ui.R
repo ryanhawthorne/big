@@ -65,13 +65,10 @@ ui <- fluidPage(
         the BIG, that is higher than R585 multiplied by the number of household members, we assume to no longer be hungry. Note that 
         the number of households reporting hunger is closer to 2.5m, as households up to approximately R12,000 per month in income 
         still report some degree of hunger, and so the number of hungry households, even after the BIG, is likely significantly 
-        under-estimated.",
-        style = "color:gray",
-        style="padding-bottom:50px;"),
+        under-estimated."),
     style="margin-bottom:50px;"),
   
-    h3("Approach to calculating household income",
-       style="padding-top:100px;"),
+    h3("Approach to calculating household income"),
     div("The approach to computing monthly household income from the GHS used here is similar to", 
         a(href = "https://www.datafirst.uct.ac.za/training/resources",
           "the methodology developed by Dr Andrew Kerr (DataFirst, UCT)."),
